@@ -6,3 +6,14 @@
 .sample_text24 {
   height: 100px;
 }
+
+.stars {
+  display: inline-block;
+}
+
+.rated img{
+  background-image: url(rated.jpg);
+  display: inline-block;
+  width: 30px;
+  height: auto;
+}
