@@ -7,6 +7,10 @@
   height: 100px;
 }
 
+/*#review {
+  display: flex;
+}*/
+
 .stars {
   display: inline-block;
 }
@@ -14,6 +18,21 @@
 .rated img{
   background-image: url(rated.jpg);
   display: inline-block;
-  width: 30px;
+  width: 23px; /*星の大きさ*/
   height: auto;
+}
+
+#person {
+  float: left;
+  width: 150px;
+  margin: 10px; /*外側余白*/
+  padding: 5px;
+  border: 1px rgba(0, 0, 0, 0.272);
+  border-top-style: solid;
+  /*border-bottom-style: solid;*/
+}
+
+#user_name {
+  font-size: 20px;
+  font-weight: bold;
 }
