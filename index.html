@@ -4,15 +4,27 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>よろず口コミ</title>
-  <link rel="icon" href="pawpads.jpg" type="image/x-icon">
+  <link rel="icon" href="rated.png" type="image/x-icon">
   <link rel="stylesheet" href="style.css" type="text/css">
 </head>
 <body>
-    <p class="popFont queMargin">万物への口コミサイト</p>
+    <h1 class="popFont Title">万物への口コミサイト</h1>
     <p class="maruFont" style="text-align: center">この世のすべてのものに対して口コミを書けるウェブサイトです。<p>
-    <div class="sample_text24 popFont" data-number="01">
-      あなたの年齢は？
+    <div class="sample_text24 popFont">
+      あの商品はどうでしたか？
     </div>
+
+    <div id="person">
+      <div id="user_name">takashi</div>
+      <div id="stars" class="stars rated"><img src="rated.png"><img src="rated.png"><img src="rated.png"><img src="rated.png"><img src="unrated.png"></div>
+      <div id="comment">割とよかった</div>
+      <div id="check">
+        <input type="checkbox" id="checkInput_0"/>
+        <div class="bg"></div>
+      </div>
+      <div class="goodNum"></div>
+    </div>
+
     <div id="review">
       レビュー
     </div>
