@@ -102,6 +102,10 @@ async function loadReviews() {
     const username = JSON.parse(storage.getItem("user_name"));
     document.getElementById("name").value = username;
   };
+  const checked = document.querySelector('input[name="rating"]:checked');
+  if (checked) {
+    checked.checked = false;
+  };
 };
 loadReviews();
 
@@ -145,16 +149,21 @@ async function addReview() {
     //console.log(newId);
   //};
 
-  if (error) {
-    console.error(error);
-    alert("投稿失敗");
-  };
   storage.user_name = JSON.stringify(name);
   const mp = JSON.parse(storage.getItem("myPost"));
   mp.push(idDecide);
   storage.myPost = JSON.stringify(mp);
   //フォームの空欄化
   document.getElementById("comm").value = '';
+
+  if (error) {
+    console.error(error);
+    let myp = JSON.parse(storage.getItem("myPost"));//ローカルストレージ読み取り
+    const newgn = myp.filter(num => num !== idDecide);//リストから削除
+    console.log(newgn);
+    storage.myPost = JSON.stringify(newgn);//ローカルストレージ書き出し
+    alert("投稿失敗");
+  };
 
   loadReviews();//レビューの再読み込み
   updateStars(0);
