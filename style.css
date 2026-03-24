@@ -14,6 +14,10 @@
   display: flex;
 }*/
 
+#review {
+  display: inline-block;
+}
+
 .stars {
   display: inline-block;
 }
@@ -25,7 +29,7 @@
   margin-right: 2px;
 }
 
-#person {
+[id^="person_"] {
   float: left;
   width: 150px;
   margin: 10px; /*外側余白*/
@@ -88,4 +92,92 @@
   vertical-align: top;
   margin-top: 10px;
   color: #DE0084;
+}
+
+#post {
+  text-align: center;
+  background-color: #82d30047;/*背景色*/
+  width: 300px;
+  margin: 50px auto;
+  padding: 40px 0 0 0;
+  border: 10px #cba702;
+  border-style: outset;
+}
+.postTitle {
+  margin-bottom: 20px;
+  font-size:25px;
+  font-weight: bold;
+  color: rgb(46, 132, 45);
+}
+#name {
+  width: 230px;
+  height: 40px;
+  padding: 0.3em;
+  border: 1px solid #999999;
+  box-sizing: border-box;
+  background: #82d30018;/*#dfdfdf*/
+  margin-bottom: 5px;
+  font-size: 20px;
+  border-radius: 5px;
+}
+#name:not(:placeholder-shown):invalid {
+  background: #d300002c;
+  border-color: red;
+}
+#comm:not(:placeholder-shown):invalid {
+  background: #d300002c;
+  border-color: red;
+}
+/*textarea*/
+#comm {
+  resize: none;
+  width: 230px;
+  height: 130px;
+  background: #82d30018;
+  font-size: 15px;
+  border-radius: 5px;
+}
+/*星の数*/
+#postStars {
+  display: inline-block;
+  gap: 4px;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  justify-content: center;
+}
+#postStars input[type="radio"] { display: none; }
+#postStars label {
+  cursor: pointer;
+  display: inline-block;
+  align-items: center;
+  justify-content: center;
+  width: 45px;
+  height: 45px;
+  border-radius: 50%;
+  transition: transform 0.1s;
+}
+#postStars label:hover { transform: scale(1.15); }
+#postStars label img {
+  width: 30px;
+  height: 30px;
+  margin: 10px;
+  pointer-events: none;
+}
+/*投稿ボタン*/
+button {
+      width: 60px;
+      height: 40px;
+      font-size: 18px;
+      margin-top: 10px;
+      border: 0px solid #999;
+      border-radius: 5px;
+      color: #ffffff;
+      background: #39b500;/*rgb(74, 170, 239)*/
+    }
+.warn {
+  font-size: 10px;
+  text-align: center;
+  margin-top: 30px;
+  color: red;
 }
