@@ -3,17 +3,17 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>よろず口コミ</title>
+  <title>今日の口コミ</title>
   <link rel="icon" href="rated.png" type="image/x-icon">
   <link rel="stylesheet" href="style.css" type="text/css">
 </head>
 <body>
-    <h1 class="popFont Title">万物への口コミサイト</h1>
-    <p class="maruFont" style="text-align: center">この世のすべてのものに対して口コミを書けるウェブサイトです。<p>
+    <h1 class="popFont Title">今日の口コミ</h1>
+    <p class="maruFont" style="text-align: center">１日に１回、日記のように今日の口コミを書けるウェブサイトです。<p>
     <div class="sample_text24 popFont">
-      あの商品はどうでしたか？
+      今日はどうでしたか？
     </div>
-
+<!--
     <div id="person">
       <div id="user_name">takashi</div>
       <div id="stars" class="stars rated"><img src="rated.png"><img src="rated.png"><img src="rated.png"><img src="rated.png"><img src="unrated.png"></div>
@@ -24,16 +24,36 @@
       </div>
       <div class="goodNum"></div>
     </div>
-
+-->
     <div id="review">
       レビュー
     </div>
-    <div>
-      <input id="name" placeholder="名前"><br>
-      <input id="st" placeholder="５段階評価"><br>
-      <textarea id="comm" placeholder="コメント"></textarea><br>
-      <button id="postButton">投稿</button>
+    <div id="post">
+      <div class="postChild postTitle">投稿フォーム</div>
+      <div class="postChild">
+        <input id="name" placeholder="名前（10文字以内）" required maxlength="10">
+      </div>
+      <div id="postStars">
+        <input type="radio" name="rating" id="s1" value="1">
+        <label for="s1"><img src="emunrated.png" id="img1"></label>
+
+        <input type="radio" name="rating" id="s2" value="2">
+        <label for="s2"><img src="emunrated.png" id="img2"></label>
+
+        <input type="radio" name="rating" id="s3" value="3">
+        <label for="s3"><img src="emunrated.png" id="img3"></label>
+
+        <input type="radio" name="rating" id="s4" value="4">
+        <label for="s4"><img src="emunrated.png" id="img4"></label>
+
+        <input type="radio" name="rating" id="s5" value="5">
+        <label for="s5"><img src="emunrated.png" id="img5"></label>
+      </div>
+      <div class="postChild"><textarea id="comm" placeholder="コメント（100文字以内）" required maxlength="100"></textarea></div>
+      <div class="postChild"><button id="postButton">投稿</button></div>
+      <div class="postChild warn">※フォームには個人情報を入力しないでください。</div>
     </div>
+    
   
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="script.js"></script>
