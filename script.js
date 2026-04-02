@@ -252,6 +252,13 @@ document.querySelectorAll('input[name="rating"]').forEach(radio => {
   });
 });
 
+const menu = document.querySelector('.header_line');
+menu.addEventListener("click", menuchange);
+function menuchange() {
+  document.querySelector('body').classList.toggle('active');
+  document.querySelector('.open_menu').classList.toggle('active');
+}
+
 // ホバーで仮プレビュー
 //for (let i = 1; i <= 5; i++) {
   //const label = document.querySelector(`label[for="s${i}"]`);
