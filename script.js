@@ -97,17 +97,18 @@ async function loadReviews() {
   document.querySelectorAll('input[type="checkbox"]').forEach((checkbox) => {
     checkbox.addEventListener("change", loadLikes);
   });
-  //ユーザー名があればセット
-  if (storage.getItem("user_name") != null) {
-    const username = JSON.parse(storage.getItem("user_name"));
-    document.getElementById("name").value = username;
-  };
+  
   const checked = document.querySelector('input[name="rating"]:checked');
   if (checked) {
     checked.checked = false;
   };
 };
-loadReviews();
+document.addEventListener("DOMContentLoaded", () => {
+  if (location.pathname.endsWith("index.html")) {
+    loadReviews();
+  }
+});
+
 
 async function addReview() {
   document.getElementById("postButton").disabled = true;
@@ -165,11 +166,22 @@ async function addReview() {
     alert("投稿失敗");
   };
 
-  loadReviews();//レビューの再読み込み
-  updateStars(0);
+  //updateStars(0);
   document.getElementById("postButton").disabled = false;
+  window.location.href = "index.html";
 }
-document.getElementById('postButton').addEventListener("click", addReview);
+document.addEventListener("DOMContentLoaded", () => {
+  if (location.pathname.endsWith("index3.html")) {
+    //ユーザー名があればセット
+    if (storage.getItem("user_name") != null) {
+      const username = JSON.parse(storage.getItem("user_name"));
+      document.getElementById("name").value = username;
+    };
+    document.getElementById('postButton').addEventListener("click", addReview);
+  }
+});
+
+
 
 
 //いいねボタン
