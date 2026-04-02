@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>今日の口コミ</title>
+  <link rel="icon" href="rated.png" type="image/x-icon">
+  <link rel="stylesheet" href="style.css" type="text/css">
+</head>
+<nav class="open_menu">
+  <div class="menu1"><a class="menu11" href="index2.html">ー 何のサイト？？ ー</a></div>
+  <div class="menu2"><a class="menu11" href="https://www.google.com">ー 投稿する ー</a></div>
+  <div class="menu2"><a class="menu11" href="https://www.google.com">ー 設定 ー</a></div>
+</nav>
+<header>
+  <div class="header_background">
+      <div class="header_container">
+        <div class="header_navbar">
+          <div class="logo">
+            <a class="logo_item" href="index.html">
+              <img src="rated.png" class="headStar">
+              <text class="headText">Review</text>
+            </a>
+          </div>
+          <a class="header_line">
+            <span class="line-item line-item--top"></span>
+            <span class="line-item line-item--middle"></span>
+            <span class="line-item line-item--bottom"></span>
+          </a>
+        </div>
+      </div>
+    </div>
+</header>
+<body>
+  <h1>投稿する</h1>
+
+  <div id="post">
+      <div class="postChild postTitle">投稿フォーム</div>
+      <div class="postChild">
+        <input id="name" placeholder="名前（10文字以内）" required maxlength="10" class="kiwi">
+      </div>
+      <div id="postStars">
+        <input type="radio" name="rating" id="s1" value="1">
+        <label for="s1"><img src="emunrated.png" id="img1"></label>
+
+        <input type="radio" name="rating" id="s2" value="2">
+        <label for="s2"><img src="emunrated.png" id="img2"></label>
+
+        <input type="radio" name="rating" id="s3" value="3">
+        <label for="s3"><img src="emunrated.png" id="img3"></label>
+
+        <input type="radio" name="rating" id="s4" value="4">
+        <label for="s4"><img src="emunrated.png" id="img4"></label>
+
+        <input type="radio" name="rating" id="s5" value="5">
+        <label for="s5"><img src="emunrated.png" id="img5"></label>
+      </div>
+      <div class="postChild"><textarea id="comm" placeholder="コメント（100文字以内）" required maxlength="100" class="kiwi"></textarea></div>
+      <div class="postChild"><button id="postButton" class="kiwi">投稿</button></div>
+      <div class="postChild warn">※フォームには個人情報を入力しないでください。</div>
+    </div>
+    
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="script.js"></script>
+</body>
+</html>
