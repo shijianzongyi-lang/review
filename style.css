@@ -68,7 +68,8 @@ header {
 }
 
 header {
-  position: relative;  /* または sticky / fixed など既存の指定に合わせる */
+  position: sticky;  /* または sticky / fixed など既存の指定に合わせる */
+  top: 0;
   z-index: 200;        /* open_menu の z-index: 100 より大きい値にする */
 }
 
