@@ -288,7 +288,7 @@ body {
   pointer-events: none;
 }
 /*投稿ボタン*/
-button {
+#postButton {
       width: 60px;
       height: 40px;
       font-size: 20px;
@@ -298,6 +298,25 @@ button {
       color: #ffffff;
       background: #39b500;/*rgb(74, 170, 239)*/
     }
+/*いいね＋削除*/
+#buttons {
+  display: flex;
+}
+/*削除*/
+#deletePost {
+  margin-left: auto;
+  margin-top: 10px;  
+}
+[id^="delete_"] {
+  width: 21px;        /* 画像に合わせてサイズを指定 */
+  height: 21px;
+  background-image: url('delete.png');
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+}
 .warn {
   font-size: 10px;
   text-align: center;
