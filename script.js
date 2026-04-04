@@ -47,6 +47,8 @@ async function loadReviews() {
     const commentDiv = document.createElement('div');
     const likesDiv = document.createElement('div');
     const likesNumDiv = document.createElement('div');
+    const deletePost = document.createElement('div');
+    const buttons = document.createElement('div');
     person.id = `person_${review.id}`;
     nameDiv.id = 'user_name';
     starsDiv.id = 'stars';
@@ -55,6 +57,8 @@ async function loadReviews() {
     likesDiv.id = 'check';
     likesNumDiv.id = `likesNum_${review.id}`;
     likesNumDiv.className = 'goodNum';
+    deletePost.id = 'deletePost';
+    buttons.id = 'buttons';
     reviews.appendChild(person);//大枠を追加
     nameDiv.innerHTML = review.user_name || 'no name';//nameDiv内の文字を指定
     person.appendChild(nameDiv);//nameDivを追加
@@ -76,10 +80,21 @@ async function loadReviews() {
     //いいねボタンを生成
     likesDiv.innerHTML = `<input type="checkbox" id="checkInput_${review.id}"/>
         <div class="bg"></div>`;
-    person.appendChild(likesDiv);
+    buttons.appendChild(likesDiv);
     //いいね数を生成
     likesNumDiv.innerHTML = review.likes;
-    person.appendChild(likesNumDiv);
+    buttons.appendChild(likesNumDiv);
+    //削除ボタンを生成
+    person.appendChild(buttons);
+    const mp = JSON.parse(storage.getItem("myPost"));
+    for (const mpChild of mp) {
+      if (review.id == mpChild) {
+        deletePost.innerHTML = `<button id="delete_${review.id}"></button>`;
+        buttons.appendChild(deletePost);
+        document.getElementById(`delete_${review.id}`).addEventListener("click", deleteReview);
+      };
+    };
+    
     //過去に付けたいいねを反映
     let gn = JSON.parse(storage.getItem("good_num"));//ローカルストレージ読み取り
     for (const gnChild of gn) {
@@ -183,7 +198,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
 
-
 //いいねボタン
 async function loadLikes(event) {
   const cb = event.target;//changeしたpersonのDivタグ
@@ -264,6 +278,7 @@ document.querySelectorAll('input[name="rating"]').forEach(radio => {
   });
 });
 
+//ヘッダー押したとき
 const menu = document.querySelector('.header_line');
 menu.addEventListener("click", menuchange);
 function menuchange() {
@@ -271,10 +286,36 @@ function menuchange() {
   document.querySelector('.open_menu').classList.toggle('active');
 }
 
+
+//削除ボタン
+async function deleteReview(event) {
+  const al = window.confirm('削除しますか？  この操作は取り消せません');
+  if (al == true) {
+    console.log(`${event.target.id}でかつ${al}`);
+    const tmpId = event.target.id.match(/\d+$/)[0];//今問題のid番号
+    //Supabaseから削除
+    const { error } = await client
+      .from("table_1")
+      .delete()
+      .eq("id", Number(tmpId));
+    if (error) {
+      alert('削除に失敗しました');
+    } else {
+      alert('正常に削除されました')
+    }
+    //ローカルストレージ編集
+    let myp = JSON.parse(storage.getItem("myPost"));//ローカルストレージ読み取り
+    const newmyp = myp.filter(num => num !== Number(tmpId));//リストから削除
+    storage.myPost = JSON.stringify(newmyp);//ローカルストレージ書き出し
+    loadReviews();
+  }
+}
+if (location.pathname.endsWith("index.html")) {
+    
+}
 // ホバーで仮プレビュー
 //for (let i = 1; i <= 5; i++) {
   //const label = document.querySelector(`label[for="s${i}"]`);
   //label.addEventListener('mouseenter', () => updateStars(i));
   //label.addEventListener('mouseleave', () => updateStars(current));
 //};
-//window.confirm('削除しますか？');
