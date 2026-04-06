@@ -133,6 +133,19 @@ body {
   font-weight: bold;
 }
 
+select {
+  height: 33px;
+  font-family: "Kiwi Maru", serif;
+  font-size: 20px;
+  margin-left: 20px;
+  font-weight: bold;
+  border-radius: 18px;
+  background-color: #dbdbdb;
+}
+option {
+  font-family: "Kiwi Maru", serif;
+  font-weight: bold;
+}
 /*#review {
   display: flex;
 }*/
