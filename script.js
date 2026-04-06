@@ -11,33 +11,110 @@ if (storage.getItem("myPost") == null) {
   storage.setItem("myPost", JSON.stringify([]));//myPostの初期リスト設定
 };
 
-
-async function loadReviews() {
+//最近のポスト
+async function currentData() {
   const { data, error } = await client
-  .from('table_1')   // ← テーブル名
-  .select('*')
-
+    .from('table_1')
+    .select('*')
+    .order('id', { ascending: false })
+    .limit(20);
   if (error) {
-    console.error(error);
+    return error;
   } else {
-    console.log(data);
+    return data;
   }
-  console.log(data[0]['stars']);
-  for(let i = 0; i < 4; i += 1) {
-    console.log(typeof data[i]['stars']);
+};
+async function main() {
+  loadReviews(await currentData());
+};
+
+//自分のポスト
+async function myData() {
+  const myp = JSON.parse(storage.getItem("myPost"));
+  const { data, error } = await client
+    .from('table_1')
+    .select('*')
+    .in('id', myp)
+    .order('id', { ascending: false });
+  if (error) {
+    return error;
+  } else {
+    return data;
   }
+};
+async function mp() {
+  loadReviews(await myData());
+};
+
+//いいねしたポスト
+async function likeData() {
+  const myp = JSON.parse(storage.getItem("good_num"));
+  const { data, error } = await client
+    .from('table_1')
+    .select('*')
+    .in('id', myp)
+    .order('id', { ascending: false });
+  if (error) {
+    return error;
+  } else {
+    return data;
+  }
+};
+async function lp() {
+  loadReviews(await likeData());
+};
+
+//いいねが多い順
+async function likesData() {
+  const { data, error } = await client
+    .from('table_1')
+    .select('*')
+    .order('likes', { ascending: false })
+    .limit(20);
+  if (error) {
+    return error;
+  } else {
+    return data;
+  }
+};
+async function lsp() {
+  loadReviews(await likesData());
+};
+
+//全てのポスト
+async function allData() {
+  const { data, error } = await client
+    .from('table_1')
+    .select('*')
+    .order('id', { ascending: false });
+  if (error) {
+    return error;
+  } else {
+    return data;
+  }
+};
+async function ap() {
+  loadReviews(await allData());
+};
+
+
+async function loadReviews(list) {
+  //const { data, error } = await client
+  //.from('table_1')   // ← テーブル名
+  //.select('*')
+  const data = list; // data が入る
+  console.log(data);
+  //if (error) {
+    //console.error(error);
+  //} else {
+    //console.log(data);
+  //}
+  //console.log(data[0]['stars']);
+  //for(let i = 0; i < 4; i += 1) {
+    //console.log(typeof data[i]['stars']);
+  //}
+
   //HTMLに反映
-  //const reviews = document.getElementById("review");
-  //reviews.innerHTML = "";
-  //data.forEach(review => {
-    //const el = document.createElement("div");
-    //el.innerHTML = `
-      //<b>${review.user_name}</b><br>
-      //${review.stars}　${review.review}
-      //<hr>
-    //`;
-    //reviews.appendChild(el);
-    //})
   const reviews = document.getElementById("review");
   reviews.innerHTML = "";
   data.forEach(review => {
@@ -108,7 +185,7 @@ async function loadReviews() {
     };
   });
   //いいねボタンを発火させるため
-  console.log(document.querySelectorAll('input[type="checkbox"]'));
+  //console.log(document.querySelectorAll('input[type="checkbox"]'));
   document.querySelectorAll('input[type="checkbox"]').forEach((checkbox) => {
     checkbox.addEventListener("change", loadLikes);
   });
@@ -120,7 +197,21 @@ async function loadReviews() {
 };
 document.addEventListener("DOMContentLoaded", () => {
   if (location.pathname.endsWith("index.html")) {
-    loadReviews();
+    main();
+    const select = document.querySelector('select');
+    select.addEventListener('change', () => {
+      if (select.value == '最近のポスト') {
+        main();
+      } else if (select.value == '自分のポスト') {
+        mp();
+      } else if (select.value == 'いいねしたポスト') {
+        lp();
+      } else if (select.value == 'いいねが多い順') {
+        lsp();
+      } else if (select.value == 'すべてのポスト（重いかも）') {
+        ap();
+      };
+    })
   }
 });
 
@@ -301,7 +392,7 @@ async function deleteReview(event) {
     if (error) {
       alert('削除に失敗しました');
     } else {
-      alert('正常に削除されました')
+      alert('削除しました')
     }
     //ローカルストレージ編集
     let myp = JSON.parse(storage.getItem("myPost"));//ローカルストレージ読み取り
@@ -310,9 +401,7 @@ async function deleteReview(event) {
     loadReviews();
   }
 }
-if (location.pathname.endsWith("index.html")) {
-    
-}
+
 // ホバーで仮プレビュー
 //for (let i = 1; i <= 5; i++) {
   //const label = document.querySelector(`label[for="s${i}"]`);
