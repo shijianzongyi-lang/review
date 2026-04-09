@@ -52,3 +52,8 @@ document.getElementById('debtn4').addEventListener("click", () => {
     alert('削除しました');
   }
 });
+
+//管理画面への遷移
+document.getElementById('contbtn').addEventListener("click", () => {
+  open('index5.html');
+})
