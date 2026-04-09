@@ -300,10 +300,33 @@ option {
   margin: 10px;
   pointer-events: none;
 }
+#loadmore {
+  margin: 30px;
+  text-align: center;
+}
+#likeload {
+  margin: 30px;
+  text-align: center;
+}
+.more {
+  width: 200px;
+  height: 40px;
+  font-family: "Kiwi Maru", serif;
+  font-size: 20px;
+  margin-top: 10px;
+  border: 0px solid #999;
+  border-radius: 5px;
+  color: #ffffff;
+  background: #006ab5;/*rgb(74, 170, 239)*/
+}
+.hidden {
+  display: none;
+}
 /*投稿ボタン*/
 #postButton {
       width: 60px;
       height: 40px;
+      font-family: "Kiwi Maru", serif;
       font-size: 20px;
       margin-top: 10px;
       border: 0px solid #999;
