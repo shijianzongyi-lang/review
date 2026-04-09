@@ -11,7 +11,7 @@ if (storage.getItem("myPost") == null) {
   storage.setItem("myPost", JSON.stringify([]));//myPostの初期リスト設定
 };
 
-//最近のポスト
+//最近のポスト//使ってない
 async function currentData() {
   const { data, error } = await client
     .from('table_1')
@@ -64,23 +64,6 @@ async function lp() {
   loadReviews(await likeData());
 };
 
-//いいねが多い順
-async function likesData() {
-  const { data, error } = await client
-    .from('table_1')
-    .select('*')
-    .order('likes', { ascending: false })
-    .limit(20);
-  if (error) {
-    return error;
-  } else {
-    return data;
-  }
-};
-async function lsp() {
-  loadReviews(await likesData());
-};
-
 //全てのポスト
 async function allData() {
   const { data, error } = await client
@@ -96,6 +79,66 @@ async function allData() {
 async function ap() {
   loadReviews(await allData());
 };
+
+//数件ずつ読み込み
+let page = 0;
+const PAGE_SIZE = 10;//１回で読み込む件数
+let storageData = [];
+async function fetchData() {
+  const from = page * PAGE_SIZE;
+  const to = from + PAGE_SIZE - 1;
+
+  const { data, error } = await client
+    .from('table_1')
+    .select('*')
+    .order('id', { ascending: false })
+    .range(from, to);
+
+  if (error) {
+    return error;
+  } else if (data[data.length-1]['id'] == 1) {
+    document.getElementById('loadmore').classList.add('hidden');
+    storageData = [...storageData, ...data];
+    return storageData;
+  } else {
+    page++;
+    storageData = [...storageData, ...data];
+    return storageData;
+  }
+};
+async function fd() {
+  loadReviews(await fetchData());
+};
+
+//いいね多い順に数件ずつ
+let favoData = [];
+async function likesData() {
+  const from = page * PAGE_SIZE;
+  const to = from + PAGE_SIZE - 1;
+
+  const { data, error } = await client
+    .from('table_1')
+    .select('*')
+    .order('likes', { ascending: false })
+    .range(from, to);
+
+  if (error) {
+    return error;
+  } else if (data[data.length-1]['id'] == 1) {
+    document.getElementById('likeload').classList.add('hidden');
+    favoData = [...favoData, ...data];
+    return favoData;
+  } else {
+    page++;
+    favoData = [...favoData, ...data];
+    return favoData;
+  }
+};
+async function lsp() {
+  loadReviews(await likesData());
+};
+
+
 
 
 async function loadReviews(list) {
@@ -197,18 +240,35 @@ async function loadReviews(list) {
 };
 document.addEventListener("DOMContentLoaded", () => {
   if (location.pathname.endsWith("index.html")) {
-    main();
+    fd();
+    document.getElementById('lmbtn').addEventListener('click', fd);
+    document.getElementById('llbtn').addEventListener('click', lsp);
+    document.getElementById('likeload').classList.add('hidden');
     const select = document.querySelector('select');
     select.addEventListener('change', () => {
       if (select.value == '最近のポスト') {
-        main();
+        page = onabort;
+        storageData = [];
+        document.getElementById('loadmore').classList.remove('hidden');
+        document.getElementById('likeload').classList.add('hidden');
+        fd();
       } else if (select.value == '自分のポスト') {
+        document.getElementById('loadmore').classList.add('hidden');
+        document.getElementById('likeload').classList.add('hidden');
         mp();
       } else if (select.value == 'いいねしたポスト') {
+        document.getElementById('loadmore').classList.add('hidden');
+        document.getElementById('likeload').classList.add('hidden');
         lp();
       } else if (select.value == 'いいねが多い順') {
+        page = 0;
+        favoData = [];
+        document.getElementById('loadmore').classList.add('hidden');
+        document.getElementById('likeload').classList.remove('hidden');
         lsp();
       } else if (select.value == 'すべてのポスト（重いかも）') {
+        document.getElementById('loadmore').classList.add('hidden');
+        document.getElementById('likeload').classList.add('hidden');
         ap();
       };
     })
