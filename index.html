@@ -32,14 +32,14 @@
     </div>
 </header>
 <body>
-    <h1 class="popFont Title">Xだす</h1>
-    <p class="maruFont" style="text-align: center">Xのようにポストできるウェブサイトです。頑張って作りました。</p>
-    <select>
+    <h1 class="Title">Review</h1>
+    <p class="maruFont" style="text-align: center">Xみたいにポストできるサイトです。右上のメニューから投稿できます。</p>
+    <select id="selectmode">
       <option>最近のポスト</option>
       <option>自分のポスト</option>
       <option>いいねしたポスト</option>
       <option>いいねが多い順</option>
-      <option>すべてのポスト（重いかも）</option>
+      <option>星が多い順</option>
     </select>
 <!--
   <div id="person_9"><div id="user_name">yusuke</div><div id="stars" class="stars rated"><img src="rated.png"><img src="rated.png"><img src="rated.png"><img src="unrated.png"><img src="unrated.png"></div><div id="comment">もう少し期待</div>
@@ -55,10 +55,11 @@
 -->
 
     <div id="review">
-      読み込み中...
+      <i>読み込み中...</i>
     </div>
     <div id="loadmore"><button id="lmbtn" class="more">もっと過去のポスト</button></div>
     <div id="likeload"><button id="llbtn" class="more">更に読み込む</button></div>
+    <div id="starload"><button id="slbtn" class="more">更に読み込む</button></div>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="script.js"></script>
