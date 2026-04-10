@@ -64,20 +64,39 @@ async function lp() {
   loadReviews(await likeData());
 };
 
-//全てのポスト
-async function allData() {
+//星の数多い順
+let sData = [];
+async function starsData() {
+  const from = page * PAGE_SIZE;
+  const to = from + PAGE_SIZE - 1;
+
   const { data, error } = await client
     .from('table_1')
     .select('*')
-    .order('id', { ascending: false });
+    .order('stars', { ascending: false })
+    .range(from, to);
   if (error) {
     return error;
+  } else if (await lineNums(sData, data) == true) {
+    document.getElementById('starload').classList.add('hidden');
+    sData = [...sData, ...data];
+    return sData;
   } else {
-    return data;
+    page++;
+    sData = [...sData, ...data];
+    return sData;
   }
 };
-async function ap() {
-  loadReviews(await allData());
+async function lineNums(list, data) {//行数を出す
+  const { count, error } = await client
+  .from('table_1')
+  .select('*', { count: 'exact', head: true });
+  if (count === list.length + data.length) {
+    return true;
+  };
+};
+async function sto() {
+  loadReviews(await starsData());
 };
 
 //数件ずつ読み込み
@@ -124,7 +143,7 @@ async function likesData() {
 
   if (error) {
     return error;
-  } else if (data[data.length-1]['id'] == 1) {
+  } else if (await lineNums(favoData, data) == true) {
     document.getElementById('likeload').classList.add('hidden');
     favoData = [...favoData, ...data];
     return favoData;
@@ -240,40 +259,53 @@ async function loadReviews(list) {
 };
 document.addEventListener("DOMContentLoaded", () => {
   if (location.pathname.endsWith("index.html")) {
-    fd();
     document.getElementById('lmbtn').addEventListener('click', fd);
     document.getElementById('llbtn').addEventListener('click', lsp);
+    document.getElementById('slbtn').addEventListener('click', sto);
     document.getElementById('likeload').classList.add('hidden');
-    const select = document.querySelector('select');
+    document.getElementById('starload').classList.add('hidden');
+    const select = document.getElementById('selectmode');
+    fd();
     select.addEventListener('change', () => {
-      if (select.value == '最近のポスト') {
-        page = onabort;
-        storageData = [];
-        document.getElementById('loadmore').classList.remove('hidden');
-        document.getElementById('likeload').classList.add('hidden');
-        fd();
-      } else if (select.value == '自分のポスト') {
-        document.getElementById('loadmore').classList.add('hidden');
-        document.getElementById('likeload').classList.add('hidden');
-        mp();
-      } else if (select.value == 'いいねしたポスト') {
-        document.getElementById('loadmore').classList.add('hidden');
-        document.getElementById('likeload').classList.add('hidden');
-        lp();
-      } else if (select.value == 'いいねが多い順') {
-        page = 0;
-        favoData = [];
-        document.getElementById('loadmore').classList.add('hidden');
-        document.getElementById('likeload').classList.remove('hidden');
-        lsp();
-      } else if (select.value == 'すべてのポスト（重いかも）') {
-        document.getElementById('loadmore').classList.add('hidden');
-        document.getElementById('likeload').classList.add('hidden');
-        ap();
-      };
-    })
+      selectmode(select.value);
+    });
   }
 });
+//モード切替関数
+function selectmode(value) {
+  if (value == '最近のポスト') {
+    page = 0;
+    storageData = [];
+    document.getElementById('loadmore').classList.remove('hidden');
+    document.getElementById('likeload').classList.add('hidden');
+    document.getElementById('starload').classList.add('hidden');
+    fd();
+  } else if (value == '自分のポスト') {
+    document.getElementById('loadmore').classList.add('hidden');
+    document.getElementById('likeload').classList.add('hidden');
+    document.getElementById('starload').classList.add('hidden');
+    mp();
+  } else if (value == 'いいねしたポスト') {
+    document.getElementById('loadmore').classList.add('hidden');
+    document.getElementById('likeload').classList.add('hidden');
+    document.getElementById('starload').classList.add('hidden');
+    lp();
+  } else if (value == 'いいねが多い順') {
+    page = 0;
+    favoData = [];
+    document.getElementById('loadmore').classList.add('hidden');
+    document.getElementById('likeload').classList.remove('hidden');
+    document.getElementById('starload').classList.add('hidden');
+    lsp();
+  } else if (value == '星が多い順') {
+    page = 0;
+    sData = [];
+    document.getElementById('loadmore').classList.add('hidden');
+    document.getElementById('likeload').classList.add('hidden');
+    document.getElementById('starload').classList.remove('hidden');
+    sto();
+  };
+}
 
 
 async function addReview() {
@@ -458,13 +490,7 @@ async function deleteReview(event) {
     let myp = JSON.parse(storage.getItem("myPost"));//ローカルストレージ読み取り
     const newmyp = myp.filter(num => num !== Number(tmpId));//リストから削除
     storage.myPost = JSON.stringify(newmyp);//ローカルストレージ書き出し
-    loadReviews();
+    //表示しなおし
+    location.reload();
   }
 }
-
-// ホバーで仮プレビュー
-//for (let i = 1; i <= 5; i++) {
-  //const label = document.querySelector(`label[for="s${i}"]`);
-  //label.addEventListener('mouseenter', () => updateStars(i));
-  //label.addEventListener('mouseleave', () => updateStars(current));
-//};
