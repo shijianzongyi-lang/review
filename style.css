@@ -1,6 +1,6 @@
 @charset "utf-8";
 
-@import url('https://fonts.googleapis.com/css2?family=Kiwi+Maru&family=Kosugi+Maru&family=Mochiy+Pop+One&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400..700&family=Kiwi+Maru&family=Kosugi+Maru&family=Mochiy+Pop+One&display=swap');
 
 header {
   width: 100%;
@@ -125,6 +125,10 @@ body {
 
 .Title {
   text-align: center;
+  font-family: "Dancing Script", cursive;
+  font-optical-sizing: auto;
+  font-weight: 700;
+  font-style: normal;
 }
 .sample_text24 {
   margin: 30px 20px 0 20px;
@@ -305,6 +309,10 @@ option {
   text-align: center;
 }
 #likeload {
+  margin: 30px;
+  text-align: center;
+}
+#starload {
   margin: 30px;
   text-align: center;
 }
