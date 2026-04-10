@@ -10,11 +10,16 @@
 <style>
   p {
     margin-left: 10px;
+    margin-top: 30px;
+    margin-bottom: 0;
+    font-weight: bold;
   }
   .btn1 {
     height: 30px;
     width: auto;
     background: rgba(255, 0, 0, 0.674);
+    color: #ffffff;
+    font-family: "Kiwi Maru", serif;
     border: none;
     border-radius: 15px;
     margin: 10px 10px;
@@ -23,12 +28,34 @@
     height: 40px;
     width: auto;
     background: rgba(255, 0, 0, 0.674);
+    color: #ffffff;
+    font-family: "Kiwi Maru", serif;
     border: none;
     border-radius: 15px;
     margin: 10px 10px;
   }
   #contbtn {
-    margin-top: 50px;
+    margin-top: 10px;
+  }
+  details {
+    border: 1px solid #aaaaaa;
+    border-radius: 4px;
+    padding: 0.5em 0.5em 0;
+    width: 90%;
+    margin-top: 10px;
+    margin-left: 10px;
+  }
+  summary {
+    font-weight: bold;
+    margin: -0.5em -0.5em 0;
+    padding: 0.5em;
+  }
+  details[open] {
+    padding: 0.5em;
+  }
+  details[open] summary {
+    border-bottom: 1px solid #aaaaaa;
+    margin-bottom: 0.5em;
   }
 </style>
 <nav class="open_menu">
@@ -58,14 +85,31 @@
 <body>
   <h1>設定</h1>
   <p>仕様</p>
-  <p>操作方法について</p>
-  <p>・画面右上のメニューボタン（三本線）からメニューを開くことができます。<br>・いいねボタンは完全匿名です。いいねを押してもポスト投稿者に通知が行くことはありません。<br>・いいねボタン横のごみ箱のマークを押すことでポストを削除することができます。ボタンを押すと確認画面が表示され、「削除しますか？」に対して「はい」を押すと削除されます。</p>
-  <p>情報の保存について</p>
-  <p>名前、星の数、コメント、いいね数の情報は、Supabaseと呼ばれるデータベース上に保存されています。ポストを投稿した人やいいねをした人を識別するための情報は皆さんがこのサイトを見ているブラウザに保存されています。そのためアカウントを登録せずとも、自分が投稿したポストを削除したり、タブを開きなおしても自分がいいねした情報が残ったりしています。<br>個人を識別する情報はデータベース上に保存されないため、こちらからは誰がどのポストをしたか分かりません。安心ですね。</p>
-  <p>ブラウザに保存したデータを削除する。※他のウェブサイトには影響しません</p>
-  <button id="debtn1" class="btn1">自分がポストした投稿に関する情報</button><button id="debtn2" class="btn1">いいねに関する情報</button><button id="debtn3" class="btn1">名前の情報</button>
+  <details>
+    <summary>投稿方法✍</summary>
+    ・メニュー→「投稿する」→名前、星の数、コメントを入力する→「投稿」<br>・名前は１０字以内、コメントは１００字以内<br>・星の数は入力必須<br>
+  </details>
+  <details>
+    <summary>情報の保存について📄</summary>
+    名前、星の数、コメント、いいね数の情報は、Supabaseと呼ばれるデータベース上に保存されています。ポストを投稿した人やいいねをした人を識別するための情報は皆さんがこのサイトを見ているブラウザに保存されています。そのためアカウントを登録せずとも、自分が投稿したポストを削除したり、タブを開きなおしても自分がいいねした情報が残ったりしています。<br>個人を識別する情報はデータベース上に保存されないため、こちらからは誰がどのポストをしたか分かりません。安心ですね。
+  </details>
+  <details>
+    <summary>その他仕様</summary>
+    ・いいねボタンは完全匿名です。いいねを押してもポスト投稿者に通知は行きません。<br>・文字制限増やしてほしかったら言ってください。<br>・星の数は１～５です。０はむりです。<br>・検索機能は気が向いたら作ります。
+  </details>
+  <p>データ</p>
+  <details>
+    <summary>データ削除✘</summary>
+    <p>ブラウザに保存したデータを削除する。※他のウェブサイトには影響しません</p>
+  <button id="debtn1" class="btn1">自分の投稿を削除できなくする</button><button id="debtn2" class="btn1">自分のいいね情報を消す</button><button id="debtn3" class="btn1">名前を削除</button>
   <div><button id="debtn4" class="btn2">上記全ての情報</button></div>
-  <button id="contbtn">管理者用</button>
+  </details>
+  <p>ひみつ♡</p>
+  <details>
+    <summary>ーーー</summary>
+    <button id="contbtn">管理者用</button>
+  </details>
+  
   <script src="script2.js"></script>
 </body>
 </html>
