@@ -171,7 +171,7 @@ option {
 
 [id^="person_"] {
   float: left;
-  width: 150px;
+  width: 150px;/*90%*/
   margin: 10px; /*外側余白*/
   padding: 5px;
   border: 1px rgba(0, 0, 0, 0.272);
@@ -240,8 +240,9 @@ option {
   width: 300px;
   margin: 50px auto;
   padding: 40px 0 0 0;
-  border: 10px #cba702;
-  border-style: outset;
+  border: 5px #578d00;
+  border-style: solid;
+  border-radius: 30px;
 }
 .postTitle {
   margin-bottom: 20px;
