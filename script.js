@@ -11,23 +11,6 @@ if (storage.getItem("myPost") == null) {
   storage.setItem("myPost", JSON.stringify([]));//myPostの初期リスト設定
 };
 
-//最近のポスト//使ってない
-async function currentData() {
-  const { data, error } = await client
-    .from('table_1')
-    .select('*')
-    .order('id', { ascending: false })
-    .limit(20);
-  if (error) {
-    return error;
-  } else {
-    return data;
-  }
-};
-async function main() {
-  loadReviews(await currentData());
-};
-
 //自分のポスト
 async function myData() {
   const myp = JSON.parse(storage.getItem("myPost"));
