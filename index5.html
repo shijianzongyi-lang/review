@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>今日の口コミ</title>
+  <title>口コミ</title>
   <link rel="icon" href="rated.png" type="image/x-icon">
   <link rel="stylesheet" href="style.css" type="text/css">
 </head>
@@ -19,6 +19,17 @@
   }
   .hidden {
     display: none;
+  }
+  table {
+    border-collapse: collapse;
+  }
+  th, td {
+    border: 1px solid #000000;
+  }
+  .box {
+    margin: 20px;
+    border: 2px #787878;
+    border-top-style: dashed;
   }
 </style>
 <nav class="open_menu">
@@ -48,8 +59,32 @@
 <body>
   <div id="pass" class="full">パスワード<input type="text" id="pw"><button id="word">ポチッ</button></div>
   <h1>管理画面</h1>
-  <p>何もありません</p>
-  <p>パスワード突破したのに残念だね</p>
+  <p>適当に操作するとサイト壊れます</p><button id="reflesh">更新</button>
+  <table>
+    <thead>
+      <tr>
+        <th>id</th>
+        <th>名前</th>
+        <th>星</th>
+        <th>コメント</th>
+        <th>いいね</th>
+      </tr>
+    </thead>
+    <tbody id="allList"></tbody>
+  </table>
+  <div id="goodid" class="box">
+    <p id="tmpgood">現在のいいね：</p>
+    <input type="text" id="tmpgoodin"><button id="tmpgoodbtn">更新</button>
+  </div>
+  <div id="postid" class="box">
+    <p id="tmppost">現在のいいね：</p>
+    <input type="text" id="tmppostin"><button id="tmppostbtn">更新</button>
+  </div>
+  <div id="nameid" class="box">
+    <p id="tmpname">現在のいいね：</p>
+    <input type="text" id="tmpnamein"><button id="tmpnamebtn">更新</button>
+  </div>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="script3.js"></script>
 </body>
 </html>
