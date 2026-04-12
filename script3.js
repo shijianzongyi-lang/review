@@ -24,9 +24,10 @@ async function digesthash(message) {
 
 async function check(me) {
   const hash = await digesthash(me);
-  const aori = ['ちっがいまぁ～すwww', 'ざ～んね～んで～した～～', 'そんなパスワードなわけwww', 'それまじでいってる？', `"${me}"なわけないじゃん笑`, 'さすがにヒントいる？\n　\n教えな～い', 'それ時間の無駄だよ'];
+  const aori = ['ちっがいまぁ～すwww', 'ざ～んね～んで～した～～', 'そんなパスワードなわけwww', `"${me}"なわけ笑`, 'さすがにヒントいる？\n　\n教えな～い', '残念！', 'ちがう！', 'ブブー✖', '誤'];
   if (hash == pass) {
     document.getElementById('pass').classList.add('hidden');
+    allData();
   } else {
     const arg = Math.floor(Math.random() * aori.length);
     alert(aori[arg]);
@@ -61,7 +62,7 @@ async function allData() {
     body.appendChild(tr);
   });
 };
-allData();
+
 document.getElementById('reflesh').addEventListener('click', () => {
   document.getElementById('allList').innerHTML = '';
   allData();
