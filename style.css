@@ -186,6 +186,7 @@ option {
 
 #comment {
   margin-left: 10px;
+  overflow-wrap: break-word;
 }
 
 
