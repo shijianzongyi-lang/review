@@ -19,10 +19,26 @@ async function myData() {
     .select('*')
     .in('id', myp)
     .order('id', { ascending: false });
+  //日付を整形
+  const fmdata = data.map(row => ({
+    id: row.id,
+    user_name: row.user_name,
+    stars: row.stars,
+    review: row.review,
+    likes: row.likes,
+    datetime: new Date(row.created_at).toLocaleString('ja-JP', {
+      timeZone: 'Asia/Tokyo',
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit',
+      hour: '2-digit',
+      minute: '2-digit',
+    })
+  }));
   if (error) {
     return error;
   } else {
-    return data;
+    return fmdata;
   }
 };
 async function mp() {
@@ -37,10 +53,26 @@ async function likeData() {
     .select('*')
     .in('id', myp)
     .order('id', { ascending: false });
+  //日付を整形
+  const fmdata = data.map(row => ({
+    id: row.id,
+    user_name: row.user_name,
+    stars: row.stars,
+    review: row.review,
+    likes: row.likes,
+    datetime: new Date(row.created_at).toLocaleString('ja-JP', {
+      timeZone: 'Asia/Tokyo',
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit',
+      hour: '2-digit',
+      minute: '2-digit',
+    })
+  }));
   if (error) {
     return error;
   } else {
-    return data;
+    return fmdata;
   }
 };
 async function lp() {
@@ -58,15 +90,31 @@ async function starsData() {
     .select('*')
     .order('stars', { ascending: false })
     .range(from, to);
+  //日付を整形
+  const fmdata = data.map(row => ({
+    id: row.id,
+    user_name: row.user_name,
+    stars: row.stars,
+    review: row.review,
+    likes: row.likes,
+    datetime: new Date(row.created_at).toLocaleString('ja-JP', {
+      timeZone: 'Asia/Tokyo',
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit',
+      hour: '2-digit',
+      minute: '2-digit',
+    })
+  }));
   if (error) {
     return error;
-  } else if (await lineNums(sData, data) == true) {
+  } else if (await lineNums(sData, fmdata) == true) {
     document.getElementById('starload').classList.add('hidden');
-    sData = [...sData, ...data];
+    sData = [...sData, ...fmdata];
     return sData;
   } else {
     page++;
-    sData = [...sData, ...data];
+    sData = [...sData, ...fmdata];
     return sData;
   }
 };
@@ -95,16 +143,32 @@ async function fetchData() {
     .select('*')
     .order('id', { ascending: false })
     .range(from, to);
+  //日付を整形
+  const fmdata = data.map(row => ({
+    id: row.id,
+    user_name: row.user_name,
+    stars: row.stars,
+    review: row.review,
+    likes: row.likes,
+    datetime: new Date(row.created_at).toLocaleString('ja-JP', {
+      timeZone: 'Asia/Tokyo',
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit',
+      hour: '2-digit',
+      minute: '2-digit',
+    })
+  }));
 
   if (error) {
     return error;
-  } else if (data[data.length-1]['id'] == 1) {
+  } else if (fmdata[fmdata.length-1]['id'] == 1) {
     document.getElementById('loadmore').classList.add('hidden');
-    storageData = [...storageData, ...data];
+    storageData = [...storageData, ...fmdata];
     return storageData;
   } else {
     page++;
-    storageData = [...storageData, ...data];
+    storageData = [...storageData, ...fmdata];
     return storageData;
   }
 };
@@ -123,16 +187,33 @@ async function likesData() {
     .select('*')
     .order('likes', { ascending: false })
     .range(from, to);
+  
+  //日付を整形
+  const fmdata = data.map(row => ({
+    id: row.id,
+    user_name: row.user_name,
+    stars: row.stars,
+    review: row.review,
+    likes: row.likes,
+    datetime: new Date(row.created_at).toLocaleString('ja-JP', {
+      timeZone: 'Asia/Tokyo',
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit',
+      hour: '2-digit',
+      minute: '2-digit',
+    })
+  }));
 
   if (error) {
     return error;
-  } else if (await lineNums(favoData, data) == true) {
+  } else if (await lineNums(favoData, fmdata) == true) {
     document.getElementById('likeload').classList.add('hidden');
-    favoData = [...favoData, ...data];
+    favoData = [...favoData, ...fmdata];
     return favoData;
   } else {
     page++;
-    favoData = [...favoData, ...data];
+    favoData = [...favoData, ...fmdata];
     return favoData;
   }
 };
@@ -164,7 +245,9 @@ async function loadReviews(list) {
   reviews.innerHTML = "";
   data.forEach(review => {
     const person = document.createElement('div');
+    const nadaDiv = document.createElement('div');
     const nameDiv = document.createElement('div');
+    const datetimeDiv = document.createElement('div');
     const starsDiv = document.createElement('div');
     const commentDiv = document.createElement('div');
     const likesDiv = document.createElement('div');
@@ -172,7 +255,9 @@ async function loadReviews(list) {
     const deletePost = document.createElement('div');
     const buttons = document.createElement('div');
     person.id = `person_${review.id}`;
+    nadaDiv.id = 'nada';
     nameDiv.id = 'user_name';
+    datetimeDiv.id = 'datetime';
     starsDiv.id = 'stars';
     commentDiv.id = 'comment';
     starsDiv.className = 'stars rated';
@@ -183,7 +268,10 @@ async function loadReviews(list) {
     buttons.id = 'buttons';
     reviews.appendChild(person);//大枠を追加
     nameDiv.innerHTML = review.user_name || 'no name';//nameDiv内の文字を指定
-    person.appendChild(nameDiv);//nameDivを追加
+    datetimeDiv.innerHTML = review.datetime;
+    nadaDiv.appendChild(nameDiv);//nameDivを追加
+    nadaDiv.appendChild(datetimeDiv);
+    person.appendChild(nadaDiv);
     person.appendChild(starsDiv);//starsDivを追加
     //星を生成
     for (let i = 0; i < review.stars; i++) {
