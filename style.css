@@ -154,9 +154,9 @@ option {
   display: flex;
 }*/
 
-#review {
+/*#review {
   display: inline-block;
-}
+}*/
 
 .stars {
   display: inline-block;
@@ -170,8 +170,8 @@ option {
 }
 
 [id^="person_"] {
-  float: left;
-  width: 150px;/*90%*/
+  /*float: left;*/
+  width: 90%;/*150px*/
   margin: 10px; /*外側余白*/
   padding: 5px;
   border: 1px rgba(0, 0, 0, 0.272);
@@ -179,9 +179,20 @@ option {
   /*border-bottom-style: solid;*/
 }
 
+#nada {
+  display: flex;
+}
 #user_name {
   font-size: 20px;
   font-weight: bold;
+}
+#datetime {
+  font-size: 11px;
+  font-weight: bold;
+  margin-left: 30px;
+  display: flex;
+  align-items: center;
+  color: #525252;
 }
 
 #comment {
