@@ -10,6 +10,15 @@ if (storage.getItem("good_num") == null) {
 if (storage.getItem("myPost") == null) {
   storage.setItem("myPost", JSON.stringify([]));//myPostの初期リスト設定
 };
+if (storage.getItem("reply_id") == null) {
+  storage.setItem("reply_id", JSON.stringify(""));//reply_idの初期値設定
+};
+if (storage.getItem("Rgood_num") == null) {
+  storage.setItem("Rgood_num", JSON.stringify([]));//Rgood_numの初期値設定
+};
+if (storage.getItem("MyReply") == null) {
+  storage.setItem("MyReply", JSON.stringify([]));//Rgood_numの初期値設定
+};
 
 //自分のポスト
 async function myData() {
@@ -220,25 +229,46 @@ async function likesData() {
 async function lsp() {
   loadReviews(await likesData());
 };
-
+//返信数を取得
+async function getreplynumber() {
+  const { data, error } = await client
+  .from('reply')
+  .select('id')
+  .order('id', { ascending: true });
+  return data;
+};
+async function replynumber() {
+  const count = await getreplynumber();
+  const list = [];
+  let lastindex = 0;
+  const { data, error } = await client
+    .from('table_1')
+    .select('id')
+    .order('id', { ascending: false })
+    .limit(1);
+  count.forEach(row => {
+    const repid = Math.floor(row.id / 100);
+    if (list[repid-1] == undefined) {
+      list[repid-1] = 1;//[1, 0, 0, undefined, 1]となる
+    } else {
+      list[repid-1] += 1;//[1, 0, 0, undefined, 1→2]となる
+    };
+    list.fill(0, lastindex, repid-1); //(0で埋める, これ以上, これ未満)
+    lastindex = repid;
+  });
+  list[data[0].id-1] = 0;
+  list.fill(0, lastindex, data[0].id-1); //(0で埋める, これ以上, これ未満)
+  console.log(list);
+  return list;
+};
 
 
 
 async function loadReviews(list) {
-  //const { data, error } = await client
-  //.from('table_1')   // ← テーブル名
-  //.select('*')
+
   const data = list; // data が入る
   console.log(data);
-  //if (error) {
-    //console.error(error);
-  //} else {
-    //console.log(data);
-  //}
-  //console.log(data[0]['stars']);
-  //for(let i = 0; i < 4; i += 1) {
-    //console.log(typeof data[i]['stars']);
-  //}
+  const replylist = await replynumber();
 
   //HTMLに反映
   const reviews = document.getElementById("review");
@@ -250,6 +280,8 @@ async function loadReviews(list) {
     const datetimeDiv = document.createElement('div');
     const starsDiv = document.createElement('div');
     const commentDiv = document.createElement('div');
+    const replyDiv = document.createElement('div');
+    const replyNumDiv = document.createElement('div');
     const likesDiv = document.createElement('div');
     const likesNumDiv = document.createElement('div');
     const deletePost = document.createElement('div');
@@ -261,6 +293,10 @@ async function loadReviews(list) {
     starsDiv.id = 'stars';
     commentDiv.id = 'comment';
     starsDiv.className = 'stars rated';
+    replyDiv.id = 'reply';
+    replyDiv.classList = 'replyimg';
+    replyNumDiv.id = `replyNum_${review.id}`;
+    replyNumDiv.className = 'replyNum';
     likesDiv.id = 'check';
     likesNumDiv.id = `likesNum_${review.id}`;
     likesNumDiv.className = 'goodNum';
@@ -287,6 +323,11 @@ async function loadReviews(list) {
     //コメント本文を生成
     commentDiv.innerHTML = review.review || 'no comment';
     person.appendChild(commentDiv);
+    //返信ボタンを生成
+    replyDiv.innerHTML = `<input type="button" id="replybtn_${review.id}"/>`;
+    buttons.appendChild(replyDiv);
+    replyNumDiv.innerHTML = replylist[review.id-1];
+    buttons.appendChild(replyNumDiv);
     //いいねボタンを生成
     likesDiv.innerHTML = `<input type="checkbox" id="checkInput_${review.id}"/>
         <div class="bg"></div>`;
@@ -322,7 +363,11 @@ async function loadReviews(list) {
   document.querySelectorAll('input[type="checkbox"]').forEach((checkbox) => {
     checkbox.addEventListener("change", loadLikes);
   });
-  
+  //返信ボタンを発火させる
+  document.querySelectorAll('input[type="button"]').forEach((button) => {
+    button.addEventListener("click", loadReply);
+  })
+  //投稿ページの星初期化
   const checked = document.querySelector('input[name="rating"]:checked');
   if (checked) {
     checked.checked = false;
@@ -391,14 +436,7 @@ async function addReview() {
     };
   };
   const idDecide = idMax + 1;//新しいidを決定
-  //星の数を確認する
-  //let stars = 0;
-  //const radio = document.getElementsByName("rating");
-  //for (const btn of radio) {
-    //if (btn.checked == true) {
-      //const stars = Number(btn.value);
-    //};
-  //};
+
   const stars = document.querySelector('input[name="rating"]:checked')?.value;
   const name = document.getElementById("name").value;
   const comment = document.getElementById("comm").value;
@@ -412,12 +450,6 @@ async function addReview() {
         user_name: name,
       }
     ])
-    //.select('id')
-    //.single();
-  //if (!error) {
-    //const newId = data.id;
-    //console.log(newId);
-  //};
 
   storage.user_name = JSON.stringify(name);
   const mp = JSON.parse(storage.getItem("myPost"));
@@ -500,6 +532,49 @@ async function loadLikes(event) {
   };
   document.getElementById(`checkInput_${tmpId}`).disabled = false;//ボタン無効化解除
 };
+//リプライ用のいいね関数
+async function RloadLikes(event) {
+  const cb = event.target;//changeしたpersonのDivタグ
+  const tmpId = cb.id.match(/\d+$/)[0];//今問題のid番号
+  document.getElementById(`checkInput_${tmpId}`).disabled = true;//ボタン無効化
+  const likesNumber = document.getElementById(`likesNum_${tmpId}`);//いいね数のDiv呼び出し
+  likesNumber.classList.toggle("goodNum");//CSSスタイル切り替え
+  likesNumber.classList.toggle("goodNum2");//同上
+
+  const { data, error } = await client
+    .from('reply')
+    .select('likes')
+    .eq('id', tmpId)
+    .single();
+  const dataLN = data.likes;
+  
+  if (cb.checked) {
+    //いいねされたとき
+    console.log("good_numの中身:", storage.getItem("Rgood_num"));
+    console.log("押されたID:", cb.id);
+    const NewLN = dataLN + 1;//新しいいいね数
+    const idnum = Number(tmpId);//idから数字読み取り
+    let gn = JSON.parse(storage.getItem("Rgood_num"));//ローカルストレージ読み取り
+    gn.push(idnum);
+    storage.Rgood_num = JSON.stringify(gn);//ローカルストレージ書き出し
+    console.log('チェックされました');
+    likesNumber.textContent = NewLN;//表示いいね数更新
+    RincrementLikes(tmpId);//DBのいいね数更新
+  } else {
+    //いいね外されたとき
+    const NewLN = dataLN - 1;//新しいいいね数
+    const idnum = Number(tmpId);//idから数字読み取り
+    let gn = JSON.parse(storage.getItem("Rgood_num"));//ローカルストレージ読み取り
+    const target = idnum;
+    const newgn = gn.filter(num => num !== target);//リストから削除
+    console.log(newgn);
+    storage.Rgood_num = JSON.stringify(newgn);//ローカルストレージ書き出し
+    console.log('チェックが外されました');
+    likesNumber.textContent = NewLN;//表示いいね数更新
+    RdecrementLikes(tmpId);//DBのいいね数更新
+  };
+  document.getElementById(`checkInput_${tmpId}`).disabled = false;//ボタン無効化解除
+};
 
 //データベース上でいいね数増加
 async function incrementLikes(id) {
@@ -517,6 +592,22 @@ async function decrementLikes(id) {
     return
   };
 };
+//上記のやつ。リプライ用
+async function RincrementLikes(id) {
+  const { data, error } = await client.rpc('rincrement_likes', { row_id: id });
+  if (error) {
+    console.error('エラー:', error)
+    return
+  };
+};
+async function RdecrementLikes(id) {
+  const { data, error } = await client.rpc('rdecrement_likes', { row_id: id });
+  if (error) {
+    console.error('エラー:', error)
+    return
+  };
+};
+
 
 let current = 0;
 function updateStars(selected) {
@@ -524,12 +615,237 @@ function updateStars(selected) {
     document.getElementById('img' + i).src = i <= selected ? 'rated.png' : 'emunrated.png';
   };
 };
-// ラジオボタン選択時
+// ラジオボタン選択時in投稿フォーム
 document.querySelectorAll('input[name="rating"]').forEach(radio => {
   radio.addEventListener('change', () => {
     current = parseInt(radio.value);
     updateStars(current);
   });
+});
+//返信ボタン
+async function loadReply(event) {
+  const cb = event.target;//押したpersonのDivタグ
+  const tmpId = cb.id.match(/\d+$/)[0];//今問題のid番号
+  storage.reply_id = JSON.stringify(tmpId);//ローカルストレージ書き出し
+  window.location.href = 'reply.html';
+};
+async function loadPaReply(number) {
+  const replylist = await replynumber();
+  console.log(replylist);
+  const { data, error } = await client
+    .from('table_1')
+    .select('*')
+    .eq('id', number)
+    .single();
+  //日付を整形
+  const jst = new Date(data.created_at).toLocaleString("ja-JP", {
+    timeZone: "Asia/Tokyo",
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+    hour: "2-digit",
+    minute: "2-digit"
+  });
+  data.created_at = jst;
+  console.log(data);
+  const origin = document.getElementById('origin');
+  origin.innerHTML = `<div id="person_${number}">
+  <div id="nada">
+    <div id="user_name">${data.user_name}</div>
+    <div id="datetime">${data.created_at}</div>
+  </div>
+  <div id="stars" class="stars rated">
+
+  </div>
+  <div id="comment">${data.review}</div>
+  <div id="buttons">
+    <div id="reply" class="addreplyimg"><input type="button" id="replybtn_${number}"></div>
+    <div id="replyNum_${number}" class="replyNum">${replylist[number-1]}</div>
+    <div id="check">
+      <input type="checkbox" id="checkInput_${number}">
+      <div class="bg"></div>
+    </div>
+    <div id="likesNum_${number}" class="goodNum">${data.likes}</div>
+  </div>
+  </div>`;
+  //星を生成
+  const starsDiv = document.getElementById('stars');
+  for (let i = 0; i < data.stars; i++) {
+    const rated = document.createElement("img");
+    rated.src = "rated.png";
+    starsDiv.appendChild(rated);
+  }
+  for (let j = 0; j < (5 - data.stars); j++) {
+    const unrated = document.createElement("img");
+    unrated.src = "unrated.png";
+    starsDiv.appendChild(unrated);
+  };
+  document.getElementById(`checkInput_${number}`).addEventListener("change", loadLikes);
+  //過去のいいねを反映
+  let gn = JSON.parse(storage.getItem("good_num"));//ローカルストレージ読み取り
+  for (const gnChild of gn) {
+    if (number == gnChild) {
+      //もしデータベースのidがgnリスト上にある場合=いいねしてあるとき
+      document.getElementById(`checkInput_${number}`).checked = true;
+      const likesNumber = document.getElementById(`likesNum_${number}`);//いいね数のDiv呼び出し
+      likesNumber.classList.toggle("goodNum");//CSSスタイル切り替え
+      likesNumber.classList.toggle("goodNum2");//CSSスタイル切り替え
+    };
+  };
+  document.getElementById(`replybtn_${number}`).addEventListener("click", () => {
+    window.location.href = 'reply_post.html';
+  });
+  if (location.pathname.endsWith("reply_post.html")) {
+    document.getElementById('buttons').style.display = 'none';
+  }
+};
+async function loadChReply(number) {
+  const { data, error } = await client
+    .from('reply')
+    .select('*')
+    .gte('id', number * 100)
+    .lt('id', (Number(number) + 1) * 100);
+  //日付を整形
+  const fmdata = data.map(row => ({
+    id: row.id,
+    user_name: row.user_name,
+    stars: row.stars,
+    review: row.review,
+    likes: row.likes,
+    datetime: new Date(row.created_at).toLocaleString('ja-JP', {
+      timeZone: 'Asia/Tokyo',
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit',
+      hour: '2-digit',
+      minute: '2-digit',
+    })
+  }));
+  console.log(fmdata);
+  const reply = document.getElementById('replies');
+  if (data.length != 0) {
+    reply.innerHTML = "";
+  } 
+  fmdata.forEach(review => {
+    const personDiv = document.createElement('div');
+    personDiv.id = `person_${review.id}`;
+    personDiv.innerHTML = `<div id="nada">
+    <div id="user_name">${review.user_name}</div>
+    <div id="datetime">${review.datetime}</div>
+  </div>
+  <div id="comment">${review.review}</div>
+  <div id="buttons">
+    <div id="check">
+      <input type="checkbox" id="checkInput_${review.id}">
+      <div class="bg"></div>
+    </div>
+    <div id="likesNum_${review.id}" class="goodNum">${review.likes}</div>
+  </div>`;
+    reply.appendChild(personDiv);
+    let gn = JSON.parse(storage.getItem("Rgood_num"));//ローカルストレージ読み取り
+    for (const gnChild of gn) {
+      if (review.id == gnChild) {
+        //もしデータベースのidがgnリスト上にあったら=いいねしてあるとき
+        document.getElementById(`checkInput_${gnChild}`).checked = true;
+        const likesNumber = document.getElementById(`likesNum_${gnChild}`);//いいね数のDiv呼び出し
+        likesNumber.classList.toggle("goodNum");//CSSスタイル切り替え
+        likesNumber.classList.toggle("goodNum2");//CSSスタイル切り替え
+      };
+    };
+    //削除ボタンを生成
+    const likesNumDiv = document.getElementById(`likesNum_${review.id}`);
+    const deleteDiv = document.createElement('div');
+    deleteDiv.id = 'deletePost';
+    const mp = JSON.parse(storage.getItem("MyReply"));
+    for (const mpChild of mp) {
+      if (review.id == mpChild) {
+        deleteDiv.innerHTML = `<button id="delete_${review.id}"></button>`;
+        likesNumDiv.after(deleteDiv);
+        document.getElementById(`delete_${review.id}`).addEventListener("click", deleteReply);
+      };
+    };
+    //いいねボタンを発火させる
+    document.querySelectorAll('input[type="checkbox"]').forEach((checkbox) => {
+      checkbox.addEventListener("change", RloadLikes);
+    });
+  });
+};
+//返信用の投稿フォームを作る→いいねの隣の返信ボタンにEventListenerつける→押したら投稿フォームへ
+//返信したらreply.htmlに戻ってくるように
+
+//reply.html開いてからの動作
+document.addEventListener("DOMContentLoaded", () => {
+  if (location.pathname.endsWith("reply.html")) {
+    const tmpId = JSON.parse(storage.getItem("reply_id"));
+    loadPaReply(tmpId);
+    loadChReply(tmpId);
+    console.log(tmpId);
+    
+  };
+});
+async function addReply() {
+  document.getElementById("postButton").disabled = true;
+  const PaId = JSON.parse(storage.getItem("reply_id"));
+  const { data } = await client
+    .from('reply')
+    .select('id')
+    .order('id', {ascending: false})
+    .gte('id', PaId * 100)
+    .lt('id', (Number(PaId) + 1) * 100);
+  let idDecide;
+  if (!data || data.length === 0) {
+    console.log("指定した範囲に行がありません");
+    idDecide = PaId*100 + 1;
+    console.log(idDecide);
+  } else {
+    const MaxId = data[0].id;
+    idDecide = MaxId + 1;//新しいidを決定
+  };
+  console.log(idDecide);
+
+  const name = document.getElementById("name").value;
+  const comment = document.getElementById("comm").value;
+  const { error } = await client
+    .from('reply')
+    .insert([
+      {
+        id: idDecide,
+        review: comment,
+        user_name: name,
+      }
+    ])
+
+  storage.user_name = JSON.stringify(name);
+  const mr = JSON.parse(storage.getItem("MyReply"));
+  mr.push(idDecide);
+  storage.MyReply = JSON.stringify(mr);
+  //フォームの空欄化
+  document.getElementById("comm").value = '';
+
+  if (error) {
+    console.error(error);
+    let myp = JSON.parse(storage.getItem("MyReply"));//ローカルストレージ読み取り
+    const newgn = myp.filter(num => num !== idDecide);//リストから削除
+    console.log(newgn);
+    storage.MyReply = JSON.stringify(newgn);//ローカルストレージ書き出し
+    alert("投稿失敗");
+  };
+
+  document.getElementById("postButton").disabled = false;
+  window.location.href = "reply.html";
+};
+//リプライ投稿フォーム開いてからの動作
+document.addEventListener("DOMContentLoaded", () => {
+  if (location.pathname.endsWith("reply_post.html")) {
+    const tmpId = JSON.parse(storage.getItem("reply_id"));
+    loadPaReply(tmpId);
+    //ユーザー名があればセット
+    if (storage.getItem("user_name") != null) {
+      const username = JSON.parse(storage.getItem("user_name"));
+      document.getElementById("name").value = username;
+    };
+    document.getElementById('postButton').addEventListener("click", addReply);
+  }
 });
 
 //ヘッダー押したとき
@@ -564,4 +880,28 @@ async function deleteReview(event) {
     //表示しなおし
     location.reload();
   }
-}
+};
+//返信を削除
+async function deleteReply(event) {
+  const al = window.confirm('削除しますか？  この操作は取り消せません');
+  if (al == true) {
+    console.log(`${event.target.id}でかつ${al}`);
+    const tmpId = event.target.id.match(/\d+$/)[0];//今問題のid番号
+    //Supabaseから削除
+    const { error } = await client
+      .from("reply")
+      .delete()
+      .eq("id", Number(tmpId));
+    if (error) {
+      alert('削除に失敗しました');
+    } else {
+      alert('削除しました')
+    }
+    //ローカルストレージ編集
+    let myp = JSON.parse(storage.getItem("MyReply"));//ローカルストレージ読み取り
+    const newmyp = myp.filter(num => num !== Number(tmpId));//リストから削除
+    storage.MyReply = JSON.stringify(newmyp);//ローカルストレージ書き出し
+    //表示しなおし
+    location.reload();
+  }
+};
