@@ -256,7 +256,7 @@ async function replynumber() {
     list.fill(0, lastindex, repid-1); //(0で埋める, これ以上, これ未満)
     lastindex = repid;
   });
-  if (list.length < data[0].id-1) {
+  if (list.length < data[0].id) {
     list[data[0].id-1] = 0;
     list.fill(0, lastindex, data[0].id-1); //(0で埋める, これ以上, これ未満)
   };
