@@ -1,6 +1,6 @@
 'use strict';
 const { createClient } = supabase
-const client = createClient('https://ltwcysyrojosazncwkqf.supabase.co', ${{ secrets.PUBLISH_KEY }})
+const client = createClient('https://ltwcysyrojosazncwkqf.supabase.co', 'sb_publishable_j5UkkULVm0FJQboPMoifaA_6Z9feuzz')
 
 const storage = localStorage;
 
