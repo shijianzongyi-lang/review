@@ -1,7 +1,6 @@
 'use strict';
 const { createClient } = supabase
-const client = createClient('https://ltwcysyrojosazncwkqf.supabase.co', 'sb_publishable_j5UkkULVm0FJQboPMoifaA_6Z9feuzz')
-//const client = supabase.createClient('https://ltwcysyrojosazncwkqf.supabase.co', 'sb_publishable_j5UkkULVm0FJQboPMoifaA_6Z9feuzz')
+const client = createClient('https://ltwcysyrojosazncwkqf.supabase.co', ${PUBLISH_KEY})
 const storage = localStorage;
 if (storage.getItem("good_num") == null) {
   //storage.good_num = JSON.stringify([]);//good_numの初期リスト設定
