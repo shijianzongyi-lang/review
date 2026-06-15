@@ -1,6 +1,7 @@
 'use strict';
 const { createClient } = supabase
 const client = createClient('https://ltwcysyrojosazncwkqf.supabase.co', 'sb_publishable_j5UkkULVm0FJQboPMoifaA_6Z9feuzz')
+
 const storage = localStorage;
 if (storage.getItem("good_num") == null) {
   //storage.good_num = JSON.stringify([]);//good_numの初期リスト設定
@@ -259,8 +260,6 @@ async function replynumber() {
     list[data[0].id-1] = 0;
     list.fill(0, lastindex, data[0].id-1); //(0で埋める, これ以上, これ未満)
   };
-  
-  console.log(list);
   return list;
 };
 
@@ -459,6 +458,7 @@ async function addReview() {
   storage.myPost = JSON.stringify(mp);
   //フォームの空欄化
   document.getElementById("comm").value = '';
+  document.getElementById("postButton").disabled = false;
 
   if (error) {
     console.error(error);
@@ -466,12 +466,14 @@ async function addReview() {
     const newgn = myp.filter(num => num !== idDecide);//リストから削除
     console.log(newgn);
     storage.myPost = JSON.stringify(newgn);//ローカルストレージ書き出し
-    alert("投稿失敗");
+    if (stars == undefined) {
+      alert("星の数を入力してね！");
+    } else {
+      alert("投稿失敗");
+    };
+  } else {
+    window.location.href = "index.html";
   };
-
-  //updateStars(0);
-  document.getElementById("postButton").disabled = false;
-  window.location.href = "index.html";
 }
 document.addEventListener("DOMContentLoaded", () => {
   if (location.pathname.endsWith("index3.html")) {
