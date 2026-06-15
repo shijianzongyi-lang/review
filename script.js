@@ -456,8 +456,7 @@ async function addReview() {
   const mp = JSON.parse(storage.getItem("myPost"));
   mp.push(idDecide);
   storage.myPost = JSON.stringify(mp);
-  //フォームの空欄化
-  document.getElementById("comm").value = '';
+  
   document.getElementById("postButton").disabled = false;
 
   if (error) {
@@ -472,6 +471,8 @@ async function addReview() {
       alert("投稿失敗");
     };
   } else {
+    //フォームの空欄化
+    document.getElementById("comm").value = '';
     window.location.href = "index.html";
   };
 }
