@@ -292,7 +292,7 @@ async function loadReviews(list) {
     nameDiv.id = 'user_name';
     datetimeDiv.id = 'datetime';
     starsDiv.id = 'stars';
-    commentDiv.id = 'comment';
+    commentDiv.id = `comment_${review.id}`;
     starsDiv.className = 'stars rated';
     replyDiv.id = 'reply';
     replyDiv.classList = 'replyimg';
@@ -322,7 +322,11 @@ async function loadReviews(list) {
       starsDiv.appendChild(unrated);
     }
     //コメント本文を生成
-    commentDiv.innerHTML = review.review || 'no comment';
+    const rowReview = review.review;
+    const replaced = rowReview.replace(/https?:\/\/[^\n]+/g, url => {
+      return `<a href="${url}" target="_blank" id="url_${review.id}">${url}</a>`;
+    });
+    commentDiv.innerHTML = replaced || 'no comment';
     person.appendChild(commentDiv);
     //返信ボタンを生成
     replyDiv.innerHTML = `<input type="button" id="replybtn_${review.id}"/>`;
@@ -367,7 +371,15 @@ async function loadReviews(list) {
   //返信ボタンを発火させる
   document.querySelectorAll('input[type="button"]').forEach((button) => {
     button.addEventListener("click", loadReply);
-  })
+  });
+  document.querySelectorAll('div[id^="comment_"]').forEach((box) => {
+    box.addEventListener("click", (event) => {
+      if (event.target.tagName.toLowerCase() === "a") {
+        return;
+      }
+      loadReply(event);
+    });
+  });
   //投稿ページの星初期化
   const checked = document.querySelector('input[name="rating"]:checked');
   if (checked) {
@@ -653,6 +665,11 @@ async function loadPaReply(number) {
   });
   data.created_at = jst;
   console.log(data);
+  //URL変換
+  const rowReview = data.review;
+  const replaced = rowReview.replace(/https?:\/\/[^\n]+/g, url => {
+    return `<a href="${url}" target="_blank">${url}</a>`;
+  });
   const origin = document.getElementById('origin');
   origin.innerHTML = `<div id="person_${number}">
   <div id="nada">
@@ -662,7 +679,7 @@ async function loadPaReply(number) {
   <div id="stars" class="stars rated">
 
   </div>
-  <div id="comment">${data.review}</div>
+  <div id="comment_${number}">${replaced}</div>
   <div id="buttons">
     <div id="reply" class="addreplyimg"><input type="button" id="replybtn_${number}"></div>
     <div id="replyNum_${number}" class="replyNum">${replylist[number-1]}</div>
@@ -732,13 +749,18 @@ async function loadChReply(number) {
     reply.innerHTML = "";
   } 
   fmdata.forEach(review => {
+    //URL変換
+    const rowReview = review.review;
+    const replaced = rowReview.replace(/https?:\/\/[^\n]+/g, url => {
+      return `<a href="${url}" target="_blank">${url}</a>`;
+    });
     const personDiv = document.createElement('div');
     personDiv.id = `person_${review.id}`;
     personDiv.innerHTML = `<div id="nada">
     <div id="user_name">${review.user_name}</div>
     <div id="datetime">${review.datetime}</div>
   </div>
-  <div id="comment">${review.review}</div>
+  <div id="comment_${review.id}">${replaced}</div>
   <div id="buttons">
     <div id="check">
       <input type="checkbox" id="checkInput_${review.id}">
